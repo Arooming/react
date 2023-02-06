@@ -14,7 +14,10 @@ const reduce = (state, action) => {
     }
     case "CREATE": {
       /* const newItem = {
-        ...action.data,
+        ...action.data,\
+        
+        // 여기서 바로 return하지 않고, newState라는 변수에 새로운 state로 바뀔 값 넣어줌
+        newState = [newItem, ...state];
       }; */
       newState = [action.data, ...state];
       break;
@@ -22,6 +25,7 @@ const reduce = (state, action) => {
     case "REMOVE": {
       // targetId를 필터링한 나머지 요소들을 배열로 만들어서 newState로 전달
       newState = state.filter((it) => it.id !== action.targetId);
+      // return을 하지 않을거면 default까지 가지 않도록 break 걸어주기
       break;
     }
     // contents만 바꾸는게 아니라 전체를 다 바꾸게 하기 위해서 action.data로 전달
@@ -30,21 +34,24 @@ const reduce = (state, action) => {
       newState = state.map((it) =>
         it.id === action.data.id ? { ...action.data } : it
       );
+      // return을 하지 않을거면 default까지 가지 않도록 break 걸어주기
       break;
     }
+    // default 반드시 정의해줘야 함!
     default:
       return state;
   }
   return newState;
 };
 
-// 이 context에 데이터를 공급하기 위해서는 컴포넌트 트리의 전체(App() 컴포넌트의 return 부분)를 <DiaryStateContext.Provider>로 감싸주면 됨
-// 그리고 value에 data 주기
+// 상태관리 로직에 context 만들기 -> 우리가 만든 data state를 컴포넌트 트리 전역에 공급하기 위한 작업
 export const DiaryStateContext = React.createContext();
+// 상태관리 로직에 context 만들기 -> 우리가 만든 dispatch 함수들(onCreate, onRemove, onEdit)을 컴포넌트 트리 전역에 공급하기 위한 작업
 export const DiaryDispatchContext = React.createContext();
 
 function App() {
-  // data의 기본 state는 빈 배열
+  // useReducer(): state 관리에 사용됨
+  // useReducer(reduce함수 전달, data의 기본 state는 빈 배열로 설정);
   const [data, dispatch] = useReducer(reduce, []);
 
   const dataId = useRef(0);
@@ -66,6 +73,7 @@ function App() {
   };
 
   // REMOVE
+  // 어떤 일기를 지울지 targetId 받아오기
   const onRemove = (targetId) => {
     dispatch({
       type: "REMOVE",
@@ -74,11 +82,12 @@ function App() {
   };
 
   // EDIT
+  // 일기이 모든 부분을 수정할 수 있게 하기 위해서 다 받아오기
   const onEdit = (targetId, date, content, emotion) => {
     dispatch({
       type: "EDIT",
-      // id는 targetId로 유지하면서 나머지는 다 바꿈
       data: {
+        // id는 targetId로 유지하면서 나머지는 다 바꿈
         id: targetId,
         date: new Date(date).getTime(),
         content,
@@ -88,7 +97,10 @@ function App() {
   };
 
   return (
+    // 이 context에 데이터를 공급하기 위해서는 컴포넌트 트리의 전체(App() 컴포넌트의 return 부분)를 <DiaryStateContext.Provider>로 감싸주면 됨
+    // 그리고 value에 data 주기
     <DiaryStateContext.Provider value={data}>
+      {/* 최적화는 신경쓰지 않고 일단 이렇게 전달해주기 */}
       <DiaryDispatchContext.Provider value={{ onCreate, onRemove, onEdit }}>
         <BrowserRouter>
           <div className="App">
