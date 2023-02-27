@@ -12,7 +12,7 @@ const Edit = () => {
 
   /* id나 diaryList가 변했을 때만 일기 데이터 꺼내오게 */
   useEffect(() => {
-    if (diaryList.length > 1) {
+    if (diaryList.length >= 1) {
       const targetDiary = diaryList.find(
         (it) => parseInt(it.id) === parseInt(id)
       );
