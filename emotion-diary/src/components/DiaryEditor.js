@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useRef, useContext } from "react";
+import { useState, useRef, useContext, useEffect } from "react";
 import { DiaryDispatchContext } from "./../App.js";
 
 import MyHeader from "./MyHeader";
@@ -35,19 +35,19 @@ const emotionList = [
 ];
 
 // toISOString(): ISO 형식(YYYY-MM-DDTHH)의 문자열 반환
-const getString = (date) => {
+const getStringDate = (date) => {
   return date.toISOString().slice(0, 10);
 };
 
-const DiaryEditor = () => {
+const DiaryEditor = ({ isEdit, originData }) => {
   const navigate = useNavigate();
 
   const contentRef = useRef();
   const [content, setContent] = useState("");
   const [emotion, setEmotion] = useState(3);
-  const [date, setDate] = useState(getString(new Date()));
+  const [date, setDate] = useState(getStringDate(new Date()));
 
-  const { onCreate } = useContext(DiaryDispatchContext);
+  const { onCreate, onEdit } = useContext(DiaryDispatchContext);
   const handleClickEmote = (emotion) => {
     setEmotion(emotion);
   };
@@ -58,15 +58,34 @@ const DiaryEditor = () => {
       return;
     }
 
-    onCreate(date, content, emotion);
+    if (
+      window.confirm(
+        isEdit ? "일기를 수정하시겠습니까?" : "새로운 일기를 작성하시겠습니까?"
+      )
+    ) {
+      if (!isEdit) {
+        onCreate(date, content, emotion);
+      } else {
+        onEdit(originData.id, date, content, emotion);
+      }
+    }
+
     /* '뒤로가기' 버튼 눌러서 일기 작성 페이지로 돌아가는 것 막기 위해서 {replace: true} 속성주기 */
     navigate("/", { replace: true });
   };
 
+  useEffect(() => {
+    if (isEdit) {
+      setDate(getStringDate(new Date(parseInt(originData.date))));
+      setEmotion(originData.emotion);
+      setContent(originData.content);
+    }
+  }, [isEdit, originData]);
+
   return (
     <div className="DiaryEditor">
       <MyHeader
-        headText={"새로운 일기쓰기"}
+        headText={isEdit ? "일기 수정하기" : "새로운 일기쓰기"}
         leftChild={
           <MyButton
             text={"< 뒤로 가기"}
