@@ -3,7 +3,7 @@ import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import New from "./pages/New";
-import Edit from "./pages/Edit";
+import Edit from "./pages/Edit.js";
 import Diary from "./pages/Diary";
 
 const reduce = (state, action) => {
@@ -143,8 +143,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/new" element={<New />} />
-              <Route path="/edit" element={<Edit />} />
-
+              <Route path="/edit/:id" element={<Edit />} />
               <Route path="/diary/:id" element={<Diary />} />
             </Routes>
           </div>
