@@ -89,7 +89,8 @@ function App() {
   const [data, dispatch] = useReducer(reduce, dummyData);
 
   // 일기가 추가되면 id에도 +1을 해주기 위해 useRef()로 dataId 생성
-  const dataId = useRef(0);
+  // 새로운 일기 생성 시, key가 겹치지 않도록 다음 일기인 6번을 default 값으로 지정
+  const dataId = useRef(6);
 
   // CREATE (언제 작성됐는지도 받아줄 거라서 date까지 받아줌)
   // 시간, 내용, 감정을 받아서 dispatch data로 전달
