@@ -34,7 +34,11 @@ const Home = () => {
         const lastDay = new Date(
           curDate.getFullYear(),
           curDate.getMonth() + 1,
-          0
+          /* 0시, 23시, 59분, 59초 */
+          0,
+          23,
+          59,
+          59
         ).getTime();
 
         // firstDay는 한 달이 시작될 때(1일), lastDay는 한 달이 끝날 때(다음 달의 0일 -> 기준 달의 마지막 일)
