@@ -1,43 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useContext, useEffect } from "react";
 import { DiaryDispatchContext } from "./../App.js";
+import { getStringDate } from "../util/date.js";
+import { emotionList } from "../util/emotion.js";
 
 import MyHeader from "./MyHeader";
 import MyButton from "./MyButton";
 import EmotionItem from "./EmotionItem";
 
-const emotionList = [
-  {
-    emotion_id: 1,
-    emotion_img: process.env.PUBLIC_URL + "/assets/emotion1.png",
-    emotion_descript: "완전 좋음",
-  },
-  {
-    emotion_id: 2,
-    emotion_img: process.env.PUBLIC_URL + "/assets/emotion2.png",
-    emotion_descript: "좋음",
-  },
-  {
-    emotion_id: 3,
-    emotion_img: process.env.PUBLIC_URL + "/assets/emotion3.png",
-    emotion_descript: "그럭저럭",
-  },
-  {
-    emotion_id: 4,
-    emotion_img: process.env.PUBLIC_URL + "/assets/emotion4.png",
-    emotion_descript: "나쁨",
-  },
-  {
-    emotion_id: 5,
-    emotion_img: process.env.PUBLIC_URL + "/assets/emotion5.png",
-    emotion_descript: "끔찍함",
-  },
-];
-
-// toISOString(): ISO 형식(YYYY-MM-DDTHH)의 문자열 반환
+/* // toISOString(): ISO 형식(YYYY-MM-DDTHH)의 문자열 반환
 const getStringDate = (date) => {
   return date.toISOString().slice(0, 10);
-};
+}; */
 
 const DiaryEditor = ({ isEdit, originData }) => {
   const navigate = useNavigate();

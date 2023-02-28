@@ -21,6 +21,7 @@ const Edit = () => {
       if (targetDiary) {
         setOriginData(targetDiary);
       } else {
+        alert("없는 일기 입니다.");
         /* 뒤로가기 눌러도 뒤로 가지 못하도록 replace에 true 줌 */
         navigate("/", { replace: true });
       }
