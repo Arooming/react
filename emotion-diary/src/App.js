@@ -1,4 +1,4 @@
-import React, { useReducer, useRef } from "react";
+import React, { useReducer, useRef, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
@@ -6,7 +6,9 @@ import New from "./pages/New";
 import Edit from "./pages/Edit.js";
 import Diary from "./pages/Diary";
 
-const reduce = (state, action) => {
+// reducer: 변경되는 로직 처리하는 한 가지의 통로
+// 따라서 newState가 변화할 때마다 localStorage에 넣어주면 됨!
+const reducer = (state, action) => {
   let newState = [];
   switch (action.type) {
     case "INIT": {
@@ -41,6 +43,8 @@ const reduce = (state, action) => {
     default:
       return state;
   }
+
+  localStorage.setItem("diary", JSON.stringify(newState));
   return newState;
 };
 
@@ -50,6 +54,7 @@ export const DiaryStateContext = React.createContext();
 export const DiaryDispatchContext = React.createContext();
 
 // dummyData 생성해서 임의의 일기 데이터 만들어줌 -> 최신 순, 가장 오래된 순, 좋은 감정 순 등등 이런 식으로 필터링 하기 위해서!
+/* localStorage 활용하기 위해서 dummyData 없애줌 
 const dummyData = [
   {
     id: 1,
@@ -81,12 +86,38 @@ const dummyData = [
     content: "오늘의 일기 5번",
     date: 1675691387996,
   },
-];
+]; */
 
 function App() {
+  // useEffect(() => {
+  /* localStorage에 저장한 item은 Storage에서 따로 삭제하지 않으면, 해당 코드를 지워도 그대로 들어가 있음 */
+  /* localStorage에 (key: "item1", value: 10)인 item을 저장해라 */
+  // localStorage.setItem("item1", 10);
+  // localStorage.setItem("item2", "20");
+  /* 객체의 경우, string으로 변환하여 직렬화 시켜줘야 제대로 된 값이 들어감 */
+  // localStorage.setItem("item3", JSON.stringify({ value: 30 }));
+  // const item1 = parseInt(localStorage.getItem("item1"));
+  // const item2 = localStorage.getItem("item2");
+  /* 객체를 꺼내려면 JSON.parse() 해줘야 원하는 객체 형태로 꺼낼 수 있음 */
+  // const item3 = JSON.parse(localStorage.getItem("item3"));
+  // console.log({ item1, item2, item3 });
+  // }, []);
+
   // useReducer(): state 관리에 사용됨
   // useReducer(reduce함수 전달, data의 기본 state는 빈 배열로 설정);
-  const [data, dispatch] = useReducer(reduce, dummyData);
+  const [data, dispatch] = useReducer(reducer, []);
+
+  useEffect(() => {
+    const localData = localStorage.getItem("diary");
+    if (localData) {
+      const diaryList = JSON.parse(localData).sort(
+        (a, b) => parseInt(b.id) - parseInt(a.id)
+      );
+      dataId.current = parseInt(diaryList[0].id) + 1;
+
+      dispatch({ type: "INIT", data: diaryList });
+    }
+  }, []);
 
   // 일기가 추가되면 id에도 +1을 해주기 위해 useRef()로 dataId 생성
   // 새로운 일기 생성 시, key가 겹치지 않도록 다음 일기인 6번을 default 값으로 지정
