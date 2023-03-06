@@ -2,11 +2,10 @@ import { useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { DiaryStateContext } from "../App";
 import { useNavigate } from "react-router-dom";
-import { getStringDate } from "../util/date";
+import { getStringDate } from "../util/Date";
 import MyHeader from "../components/MyHeader";
 import MyButton from "../components/MyButton";
-import { emotionList } from "../util/emotion";
-import { isCursorAtEnd } from "@testing-library/user-event/dist/utils";
+import { emotionList } from "../util/Emotion";
 
 const Diary = () => {
   //  useParams(): react-router-dom이 제공하는 함수 (custom hook)
